@@ -1,20 +1,25 @@
+const routes = ["home", "about", "services", "process", "contact"];
 const navLinks = document.querySelectorAll(".banner-nav a");
-const sections = [...document.querySelectorAll("main section[id]")];
+const pageSections = document.querySelectorAll(".page-section");
 
-const setActiveLink = () => {
-  const scrollPosition = window.scrollY + window.innerHeight * 0.32;
-  let activeId = "about";
-
-  for (const section of sections) {
-    if (section.offsetTop <= scrollPosition) {
-      activeId = section.id;
-    }
-  }
-
-  navLinks.forEach((link) => {
-    link.classList.toggle("active", link.getAttribute("href") === `#${activeId}`);
-  });
+const getRouteFromHash = () => {
+  const route = window.location.hash.replace("#", "");
+  return routes.includes(route) ? route : "home";
 };
 
-setActiveLink();
-window.addEventListener("scroll", setActiveLink, { passive: true });
+const showPage = () => {
+  const activeRoute = getRouteFromHash();
+
+  pageSections.forEach((section) => {
+    section.hidden = section.id !== activeRoute;
+  });
+
+  navLinks.forEach((link) => {
+    link.classList.toggle("active", link.getAttribute("href") === `#${activeRoute}`);
+  });
+
+  window.scrollTo({ top: 0, behavior: "auto" });
+};
+
+showPage();
+window.addEventListener("hashchange", showPage);
